@@ -1,9 +1,8 @@
 {
-  "checked_at": "2026-11-15T19:41:25.835657+00:00",
-  "state": "incomplete local library",
-  "tests": "18 unittest checks passed; Linux PDF worker limits and timeout/error rejection covered",
+  "checked_at": "2026-11-15T20:35:47.079244+00:00",
+  "state": "incomplete local API preview",
+  "tests": "25 tests passed: 18 core/processing and 7 Flask HTTP integration tests",
   "pending": [
-    "Owner-authenticated HTTP boundary",
     "Visual owner/reviewer UI",
     "Six locales",
     "Browser and deployment acceptance"
