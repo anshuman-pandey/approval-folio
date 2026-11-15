@@ -1,12 +1,13 @@
 {
-  "checked_at": "2026-11-15T22:42:36.971187+00:00",
-  "state": "local English browser preview",
-  "tests": "25 tests passed: 18 core/processing and 7 Flask HTTP integration tests",
+  "checked_at": "2026-11-15T23:45:29.113438+00:00",
+  "state": "local multilingual preview",
+  "tests": "26 Python core/API/catalog tests pass",
   "pending": [
-    "Six locales",
-    "Public HTTPS and native-speaker acceptance"
+    "Public HTTPS and native-speaker acceptance",
+    "Owner naming/publication approval"
   ],
   "published": false,
   "browser": "Chromium owner creation, private invitations, required downloads, two-reviewer consensus, version reset, history export and 390px layout pass",
-  "deployment": "Local non-root read-only Docker: PDF validation, exact bytes, approvals/history survive restart and clean-volume restore; post-restore version reset, stale rejection and token revocation pass. Setup 0600 and overwrite refusal pass."
+  "deployment": "Local non-root read-only Docker: PDF validation, exact bytes, approvals/history survive restart and clean-volume restore; post-restore version reset, stale rejection and token revocation pass. Setup 0600 and overwrite refusal pass.",
+  "locales": "Six-locale Chromium preference/persistence/blocked-storage/draft/file/authored-name/mobile checks pass; original approval workflow passes"
 }
