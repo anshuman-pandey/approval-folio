@@ -1,0 +1,13 @@
+{
+  "checked_at": "2026-11-15T19:38:30.027652+00:00",
+  "state": "incomplete local library",
+  "tests": "15 unittest checks passed",
+  "pending": [
+    "Owner-authenticated HTTP boundary",
+    "Bounded PDF processing",
+    "Visual owner/reviewer UI",
+    "Six locales",
+    "Browser and deployment acceptance"
+  ],
+  "published": false
+}
