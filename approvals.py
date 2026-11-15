@@ -1,7 +1,7 @@
 """Version-bound approvals. Owner methods require authentication at the boundary."""
-import hashlib,hmac,io,json,secrets,sqlite3,unicodedata
+import hashlib,hmac,io,json,secrets,sqlite3,unicodedata,subprocess,sys
+from pathlib import Path
 from datetime import datetime,timezone
-from pypdf import PdfReader
 from images import image_bytes,Invalid
 MAX_FILE=10*1024*1024
 MAX_PROJECT=100*1024*1024
@@ -21,11 +21,11 @@ def document(filename,raw):
     if type(raw) is not bytes or not 1<=len(raw)<=MAX_FILE:raise Invalid('File must contain 1 byte to 10 MiB.')
     if filename.lower().endswith('.pdf'):
         try:
-            pdf=PdfReader(io.BytesIO(raw),strict=True)
-            if pdf.is_encrypted:raise Invalid('Encrypted PDFs are not supported.')
-            if not 1<=len(pdf.pages)<=100:raise Invalid('Use a PDF with 1 to 100 pages.')
-        except Invalid:raise
-        except Exception as e:raise Invalid('PDF could not be read.') from e
+            result=subprocess.run([sys.executable,'-I',str(Path(__file__).with_name('pdf_check.py'))],input=raw,capture_output=True,timeout=5,check=True)
+            pages=json.loads(result.stdout)['pages']
+            if type(pages) is not int or not 1<=pages<=100:raise ValueError('Invalid page count')
+        except (subprocess.SubprocessError,OSError,ValueError,KeyError) as e:
+            raise Invalid('PDF check failed. Use an unencrypted PDF with 1 to 100 pages within processing limits.') from e
         return filename,'application/pdf',raw
     if not filename.lower().endswith(('.png','.jpg','.jpeg')):raise Invalid('Use a PDF, PNG or JPEG.')
     normalized,_,_=image_bytes(raw)

@@ -1,4 +1,4 @@
-import io,json,tempfile,unittest
+import io,json,tempfile,unittest,subprocess
 from unittest.mock import patch
 from PIL import Image
 from pypdf import PdfWriter
@@ -74,3 +74,14 @@ class DocumentTests(unittest.TestCase):
   for name in ['../proof.pdf','a\\b.pdf','proof\r.pdf','proof.svg','proof\u202e.pdf']:
    with self.assertRaises(Invalid):document(name,pdf())
   with self.assertRaises(Invalid):document('proof.pdf',b'x'*(10*1024*1024+1))
+
+class ProcessingTests(unittest.TestCase):
+ def test_timeout_is_rejected(self):
+  with patch('approvals.subprocess.run',side_effect=subprocess.TimeoutExpired('pdf_check',5)):
+   with self.assertRaises(Invalid):document('proof.pdf',pdf())
+ def test_worker_failure_is_rejected(self):
+  with patch('approvals.subprocess.run',side_effect=subprocess.CalledProcessError(1,'pdf_check')):
+   with self.assertRaises(Invalid):document('proof.pdf',pdf())
+ def test_invalid_worker_output_is_rejected(self):
+  with patch('approvals.subprocess.run',return_value=subprocess.CompletedProcess('pdf_check',0,b'{"pages":false}')):
+   with self.assertRaises(Invalid):document('proof.pdf',pdf())
