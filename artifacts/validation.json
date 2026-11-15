@@ -1,12 +1,12 @@
 {
-  "checked_at": "2026-11-15T21:40:52.309602+00:00",
+  "checked_at": "2026-11-15T22:42:36.971187+00:00",
   "state": "local English browser preview",
   "tests": "25 tests passed: 18 core/processing and 7 Flask HTTP integration tests",
   "pending": [
     "Six locales",
-    "Production persistence and backup recovery",
     "Public HTTPS and native-speaker acceptance"
   ],
   "published": false,
-  "browser": "Chromium owner creation, private invitations, required downloads, two-reviewer consensus, version reset, history export and 390px layout pass"
+  "browser": "Chromium owner creation, private invitations, required downloads, two-reviewer consensus, version reset, history export and 390px layout pass",
+  "deployment": "Local non-root read-only Docker: PDF validation, exact bytes, approvals/history survive restart and clean-volume restore; post-restore version reset, stale rejection and token revocation pass. Setup 0600 and overwrite refusal pass."
 }

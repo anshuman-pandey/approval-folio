@@ -2,7 +2,7 @@
 
 **An open-source Filestage alternative in preparation for versioned PDF and image approvals.**
 
-> Local English browser preview. Six locales and production deployment checks remain; no hosted demo or public release.
+> Local English browser preview. Six locales and public HTTPS acceptance remain; no hosted demo or public release.
 
 ![Actual owner workspace showing version-specific reviewer decisions](docs/assets/workspace.png)
 
@@ -10,11 +10,11 @@ The implemented core stores immutable PDF/PNG/JPEG versions in SQLite. Each revi
 
 | Implemented | Still required |
 | :--- | :--- |
-| Independent reviewer credentials and owner authentication | Production WSGI/container and backup recovery |
+| Independent reviewer credentials and owner authentication | Six interface languages |
 | Immutable files, bounded PDF checks, attachment-only downloads | Six languages |
 | Approve or request changes with a note | Production WSGI/container and backup recovery |
 | Stale-version, wrong-hash and cross-project rejection | Six languages and browser acceptance |
-| JSON history export and old-version retrieval | WSGI/container setup and recovery tests |
+| JSON history export, persistent container and backup recovery | Public HTTPS acceptance |
 
 ## Run the core checks
 
@@ -49,3 +49,5 @@ python server.py
 Listens on `127.0.0.1:8093`. Keep the generated owner key private. This development server is not a production deployment. [API routes and authentication](docs/API.md).
 
 Open http://127.0.0.1:8093 after starting the server. Unlock with the owner key, create a project, save the private reviewer links, and upload a file. Reviewers download a version before submitting a decision. Localhost invitation links work only on the same computer; remote collaboration requires an authorized HTTPS deployment. Reviewer keys stay in tab memory and are removed from the address bar after opening the invitation. Reloading requires reopening the invitation.
+
+[Persistent hosting, private setup and backup recovery](docs/DEPLOYMENT.md). Local container acceptance uses a real PDF and restores approvals and exact file bytes into a clean volume.
