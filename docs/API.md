@@ -18,4 +18,4 @@ A change request requires a note. Each reviewer must download the exact current 
 
 Authentication failures return 401; validation and stale-state errors return 400; oversized requests return 413; malformed JSON/content types return 400/415. Errors are JSON. Clients must reload after stale-state errors. Responses prohibit caching and framing. PDF files remain unsanitized; download and inspect them using an appropriate viewer.
 
-Verified using Flask's HTTP test client; real browser and production server acceptance remain pending. No UI is served yet.
+Verified using Flask’s HTTP test client and Chromium owner/reviewer workflow. The English workspace is served at `/`. Production server acceptance remains pending.

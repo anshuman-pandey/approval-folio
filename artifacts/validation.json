@@ -1,11 +1,12 @@
 {
-  "checked_at": "2026-11-15T20:35:47.079244+00:00",
-  "state": "incomplete local API preview",
+  "checked_at": "2026-11-15T21:40:52.309602+00:00",
+  "state": "local English browser preview",
   "tests": "25 tests passed: 18 core/processing and 7 Flask HTTP integration tests",
   "pending": [
-    "Visual owner/reviewer UI",
     "Six locales",
-    "Browser and deployment acceptance"
+    "Production persistence and backup recovery",
+    "Public HTTPS and native-speaker acceptance"
   ],
-  "published": false
+  "published": false,
+  "browser": "Chromium owner creation, private invitations, required downloads, two-reviewer consensus, version reset, history export and 390px layout pass"
 }

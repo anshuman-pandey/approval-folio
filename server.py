@@ -7,7 +7,7 @@ from approvals import Approvals,Invalid,MAX_FILE
 def create_app(path,owner_key):
     if not isinstance(owner_key,str) or not owner_key.isascii() or len(owner_key)<32:
         raise ValueError('Set APPROVAL_OWNER_KEY to at least 32 random ASCII characters.')
-    app=Flask(__name__,static_folder=None)
+    app=Flask(__name__)
     app.config.update(MAX_CONTENT_LENGTH=MAX_FILE+65536,MAX_FORM_MEMORY_SIZE=65536,MAX_FORM_PARTS=3)
     def db():
         if 'db' not in g:g.db=Approvals(path)
@@ -30,7 +30,7 @@ def create_app(path,owner_key):
         if store:store.close()
     @app.after_request
     def headers(response):
-        response.headers.update({'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Referrer-Policy':'no-referrer','Content-Security-Policy':"default-src 'none'; frame-ancestors 'none'; base-uri 'none'"})
+        response.headers.update({'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Referrer-Policy':'no-referrer','Content-Security-Policy':"default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'"})
         return response
     @app.errorhandler(Invalid)
     def invalid(error):return jsonify(error=str(error)),400
@@ -38,6 +38,8 @@ def create_app(path,owner_key):
     def http_error(error):return jsonify(error=error.description),error.code
     @app.errorhandler(sqlite3.OperationalError)
     def unavailable(error):return jsonify(error='Storage unavailable. Retry shortly.'),503
+    @app.get('/')
+    def home():return app.send_static_file('index.html')
     @app.get('/api/projects')
     def listing():
         owner();return jsonify([dict(r) for r in db().db.execute('SELECT id,title,latest FROM projects ORDER BY rowid DESC')])

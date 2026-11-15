@@ -1,28 +1,18 @@
-# Approval Folio · development component
+# Approval Folio
 
 **An open-source Filestage alternative in preparation for versioned PDF and image approvals.**
 
-> Local API development preview. No browser workspace, hosted demo, or public release yet.
+> Local English browser preview. Six locales and production deployment checks remain; no hosted demo or public release.
 
-```mermaid
-flowchart LR
-    A[Upload a file version] --> B[Reviewer retrieves exact bytes]
-    B --> C{Decision on current version}
-    C --> D[Approve]
-    C --> E[Request changes with a note]
-    D --> F{All reviewers approved?}
-    F --> G[Current version approved]
-    E --> H[Upload next version]
-    H --> B
-```
+![Actual owner workspace showing version-specific reviewer decisions](docs/assets/workspace.png)
 
 The implemented core stores immutable PDF/PNG/JPEG versions in SQLite. Each reviewer has a separate revocable key. Decisions refer to a version number and SHA-256 digest; a new version requires fresh decisions from everyone, even if the file content is identical. History remains available for export.
 
 | Implemented | Still required |
 | :--- | :--- |
-| Independent reviewer credentials and owner authentication | Polished owner/reviewer browser UI |
+| Independent reviewer credentials and owner authentication | Production WSGI/container and backup recovery |
 | Immutable files, bounded PDF checks, attachment-only downloads | Six languages |
-| Approve or request changes with a note | Polished owner/reviewer browser UI |
+| Approve or request changes with a note | Production WSGI/container and backup recovery |
 | Stale-version, wrong-hash and cross-project rejection | Six languages and browser acceptance |
 | JSON history export and old-version retrieval | WSGI/container setup and recovery tests |
 
@@ -43,7 +33,7 @@ Twenty-five tests cover reviewer consensus, new-version reset, stale uploads/dec
 - Reviewer keys identify an assigned review slot, not a verified human identity. These decisions are not legal signatures.
 - The core requires a recorded file retrieval before a reviewer can decide. Retrieval does not prove that the person read or understood the file.
 - Up to 20 fixed reviewers per project; 10 MiB per file and 100 MiB per project including history. PDFs must be unencrypted and have 1–100 pages. Images are normalized to metadata-free PNG, at most 16 megapixels and 10 MiB after normalization.
-- PDFs are parsed for structural acceptance but are **not sanitized or malware-scanned**. PDF structure checks run in a separate process with 256 MiB address-space and 3-second CPU limits, plus a 5-second parent timeout. These POSIX resource limits were tested on Linux; this is not a sandbox. HTTP downloads are attachment-only. No in-browser PDF rendering exists yet.
+- PDFs are parsed for structural acceptance but are **not sanitized or malware-scanned**. PDF structure checks run in a separate process with 256 MiB address-space and 3-second CPU limits, plus a 5-second parent timeout. These POSIX resource limits were tested on Linux; this is not a sandbox. HTTP downloads are attachment-only. PDF review uses attachment downloads rather than embedded rendering.
 - No email delivery, reviewer groups, threaded annotations, version comparison UI, or full Filestage parity is claimed.
 
 [Scope and distribution plan](docs/SCOPE.md) · [MIT license](LICENSE)
@@ -57,3 +47,5 @@ python server.py
 ```
 
 Listens on `127.0.0.1:8093`. Keep the generated owner key private. This development server is not a production deployment. [API routes and authentication](docs/API.md).
+
+Open http://127.0.0.1:8093 after starting the server. Unlock with the owner key, create a project, save the private reviewer links, and upload a file. Reviewers download a version before submitting a decision. Localhost invitation links work only on the same computer; remote collaboration requires an authorized HTTPS deployment. Reviewer keys stay in tab memory and are removed from the address bar after opening the invitation. Reloading requires reopening the invitation.
