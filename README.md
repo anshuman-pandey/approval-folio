@@ -1,22 +1,51 @@
 # Approval Folio
 
-**An open-source Filestage alternative in preparation for versioned PDF and image approvals.**
+### Know exactly which version was approved.
 
-> Local six-language browser preview. Native-speaker review and public HTTPS acceptance remain; no hosted demo or public release.
+Share versioned PDFs and images, gather reviewer decisions, and export the approval history. A focused, self-hosted alternative to Filestage for file approvals.
 
-![Actual owner workspace showing version-specific reviewer decisions](docs/assets/workspace.png)
+[![CI](https://github.com/anshuman-pandey/approval-folio/actions/workflows/check.yml/badge.svg)](https://github.com/anshuman-pandey/approval-folio/actions/workflows/check.yml) · [MIT license](LICENSE) · Python + SQLite · Self-hosted
 
-The implemented core stores immutable PDF/PNG/JPEG versions in SQLite. Each reviewer has a separate revocable key. Decisions refer to a version number and SHA-256 digest; a new version requires fresh decisions from everyone, even if the file content is identical. History remains available for export.
+![Approval Folio: actual application workspace](docs/assets/workspace.png)
 
-| Implemented | Still required |
-| :--- | :--- |
-| Independent reviewer credentials and owner authentication | Native-speaker review |
-| Immutable files, bounded PDF checks, attachment-only downloads | Native-speaker review |
-| Approve or request changes with a note | Production WSGI/container and backup recovery |
-| Stale-version, wrong-hash and cross-project rejection | Public HTTPS acceptance |
-| JSON history export, persistent container and backup recovery | Public HTTPS acceptance |
+**Public source preview.** The local workflow and container recovery have been tested. There is no hosted demo or tagged product release yet; public HTTPS acceptance remains pending.
 
-## Run the core checks
+## How it works
+
+1. Create a project and assign up to 20 reviewer slots with separate private invitations.
+2. Upload a PDF, PNG or JPEG. Reviewers download that version and approve it or request changes with a note.
+3. Upload a revision to start a fresh approval round, or export the complete JSON decision history.
+
+## Try it locally
+
+Requires Git, Python 3 and Docker with the Compose plugin.
+
+```sh
+git clone https://github.com/anshuman-pandey/approval-folio.git
+cd approval-folio
+python3 scripts/setup.py
+docker compose up --build -d
+```
+
+Open **http://127.0.0.1:8093**. Read the generated private `.env` file locally and use its `APPROVAL_OWNER_KEY` value to unlock the owner workspace. Setup retains any existing `.env`; do not commit or share this file.
+
+The app binds to localhost and stores data in a persistent Docker volume. Links pointing to localhost work only on your computer. For remote sharing, follow the [HTTPS deployment and backup guide](docs/DEPLOYMENT.md). Avoid `docker compose down -v` unless you intend to delete the stored data.
+
+## Included
+
+- Immutable versions with decisions tied to the exact file hash.
+- A new upload resets unanimous approval, even when the file bytes are identical.
+- Separate revocable reviewer credentials and persistent review history.
+
+**Interface languages:** English, German, Spanish, Japanese, Simplified Chinese and Traditional Chinese. Native-speaker review is still pending. User-authored content is never translated.
+
+## Know the boundaries
+
+Files are limited to 10 MiB, projects to 100 MiB, PDFs to 1–100 unencrypted pages and images to 16 megapixels. Reviewer slots are not verified identities or legal signatures. Requiring a download does not prove that someone read the file. PDF structural checks are bounded but are not malware scanning or sanitization. No email delivery, threaded annotations, groups or visual version comparisons.
+
+Private links and reviewer keys grant access to whoever holds them. Keep the owner key separate from participant credentials. This project covers the workflow above, not the full feature set of its commercial reference.
+
+## Development and checks
 
 ```sh
 python3 -m venv .venv
@@ -25,31 +54,10 @@ pip install -r requirements.txt
 python -m unittest discover -s tests -v
 ```
 
-Twenty-six tests cover reviewer consensus, new-version reset, stale uploads/decisions, byte-digest matching, per-reviewer retrieval, change-request notes, token revocation, project isolation, storage limits, persistence and file validation.
+The published baseline passed **26 Python tests**. Recorded browser acceptance covers: version upload, reviewer download and decisions, approval reset, history export and revocation. Container restart and clean-volume backup/restore were also checked. See the [validation record](artifacts/validation.json) for the exact evidence and remaining acceptance gates.
 
-## Exact boundaries
+Bug reports should include reproduction steps and browser/runtime versions, with private keys and client data removed. Focused fixes and improvements are welcome through [issues](https://github.com/anshuman-pandey/approval-folio/issues) and pull requests.
 
-- Owner methods (`create`, `upload`, `rotate`, `view`, `export`) rely on their caller for authentication. Use the authenticated boundary in `server.py`; do not expose these methods directly.
-- Reviewer keys identify an assigned review slot, not a verified human identity. These decisions are not legal signatures.
-- The core requires a recorded file retrieval before a reviewer can decide. Retrieval does not prove that the person read or understood the file.
-- Up to 20 fixed reviewers per project; 10 MiB per file and 100 MiB per project including history. PDFs must be unencrypted and have 1–100 pages. Images are normalized to metadata-free PNG, at most 16 megapixels and 10 MiB after normalization.
-- PDFs are parsed for structural acceptance but are **not sanitized or malware-scanned**. PDF structure checks run in a separate process with 256 MiB address-space and 3-second CPU limits, plus a 5-second parent timeout. These POSIX resource limits were tested on Linux; this is not a sandbox. HTTP downloads are attachment-only. PDF review uses attachment downloads rather than embedded rendering.
-- No email delivery, reviewer groups, threaded annotations, version comparison UI, or full Filestage parity is claimed.
+## Documentation
 
-[Scope and distribution plan](docs/SCOPE.md) · [MIT license](LICENSE)
-
-## Run the local development API
-
-```sh
-export APPROVAL_OWNER_KEY="$(python -c 'import secrets; print(secrets.token_urlsafe(32))')"
-export APPROVAL_DATABASE=approval.sqlite3
-python server.py
-```
-
-Listens on `127.0.0.1:8093`. Keep the generated owner key private. This development server is not a production deployment. [API routes and authentication](docs/API.md).
-
-Open http://127.0.0.1:8093 after starting the server. Unlock with the owner key, create a project, save the private reviewer links, and upload a file. Reviewers download a version before submitting a decision. Localhost invitation links work only on the same computer; remote collaboration requires an authorized HTTPS deployment. Reviewer keys stay in tab memory and are removed from the address bar after opening the invitation. Reloading requires reopening the invitation.
-
-[Persistent hosting, private setup and backup recovery](docs/DEPLOYMENT.md). Local container acceptance uses a real PDF and restores approvals and exact file bytes into a clean volume.
-
-Interface languages: English, Deutsch, Español, 日本語, 简体中文 and 繁體中文. Language changes preserve drafts, selected files and user content. [Runnable preview and publication handoff](HANDOFF.md).
+[Deployment & backups](docs/DEPLOYMENT.md) · [Api guide](docs/API.md) · [Scope & comparison](docs/SCOPE.md) · [Validation evidence](artifacts/validation.json) · [License](LICENSE)
