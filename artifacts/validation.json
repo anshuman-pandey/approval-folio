@@ -9,5 +9,27 @@
   "published": false,
   "browser": "Chromium owner creation, private invitations, required downloads, two-reviewer consensus, version reset, history export and 390px layout pass",
   "deployment": "Local non-root read-only Docker: PDF validation, exact bytes, approvals/history survive restart and clean-volume restore; post-restore version reset, stale rejection and token revocation pass. Setup 0600 and overwrite refusal pass.",
-  "locales": "Six-locale Chromium preference/persistence/blocked-storage/draft/file/authored-name/mobile checks pass; original approval workflow passes"
+  "locales": "Six-locale Chromium preference/persistence/blocked-storage/draft/file/authored-name/mobile checks pass; original approval workflow passes",
+  "current_audit": {
+    "checked_at": "2026-11-26T13:36:59.571702+00:00",
+    "source_head": "39f5465780f02bde5d134db2c847c47b641e795c",
+    "source_publication": "https://github.com/anshuman-pandey/approval-folio",
+    "source_public": true,
+    "ci": {
+      "conclusion": "success",
+      "headSha": "39f5465780f02bde5d134db2c847c47b641e795c",
+      "status": "completed",
+      "url": "https://github.com/anshuman-pandey/approval-folio/actions/runs/43975917323"
+    },
+    "local_core_check": {
+      "exit": 0,
+      "summary": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/re/_parser.py:293: ResourceWarning: unclosed file <_io.FileIO name=3 mode='rb+' closefd=True>\n  def tell(self):\nResourceWarning: Enable tracemalloc to get the object allocation traceback\n----------------------------------------------------------------------\nRan 26 tests in 3.225s\n\nOK\n"
+    },
+    "release_urls": [],
+    "hosted_demo_url": null,
+    "remaining_gates": [
+      "Public HTTPS and native-speaker acceptance"
+    ],
+    "note": "Historical validation below is retained as dated evidence. Source publication does not establish a hosted deployment."
+  }
 }
